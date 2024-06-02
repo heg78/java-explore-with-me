@@ -22,3 +22,28 @@ services:
       - POSTGRES_DB=statdb
       - POSTGRES_USER=statdb
       - POSTGRES_PASSWORD=statdb
+
+  main-service:
+    build: ./main-service
+    image: main-service
+    container_name: main-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ewmdb
+      - stat-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stat-db:5432/statdb
+      - SPRING_DATASOURCE_USERNAME=statdb
+      - SPRING_DATASOURCE_PASSWORD=statdb
+      - STAT-SERVER_URL=http://stat-server:9090
+
+  ewmdb:
+    image: postgres:14-alpine
+    volumes:
+      - /var/lib/postgresql/data/
+    container_name: ewmdb
+    environment:
+      - POSTGRES_DB=statdb
+      - POSTGRES_USER=statdb
+      - POSTGRES_PASSWORD=statdb
