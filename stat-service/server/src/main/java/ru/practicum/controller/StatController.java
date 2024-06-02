@@ -9,6 +9,7 @@ import ru.practicum.EndpointHit;
 import ru.practicum.ViewStats;
 import ru.practicum.service.StatsService;
 
+import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,7 +31,9 @@ public class StatController {
                                     @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                     @RequestParam(defaultValue = "") List<String> uris,
                                     @RequestParam(defaultValue = "false") boolean unique) {
-
+        if (end.isBefore(start)) {
+            throw new InvalidParameterException("Uncorrected format of dates");
+        }
         return service.getViewStats(start, end, uris, unique);
     }
 }
