@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.EndpointHit;
 import ru.practicum.StatsClient;
 import ru.practicum.ViewStats;
@@ -106,6 +107,7 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
+    @Transactional
     public EventFullDto updateEventFromAdmin(Long eventId, RequestAdminUpdateEventDto updateEvent) {
         Event oldEvent = checkEvent(eventId);
 
@@ -153,6 +155,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEventByUserIdAndEventId(Long userId, Long eventId, RequestUserUpdateEventDto inputUpdate) {
         checkUser(userId);
         Event oldEvent = checkEvenByInitiatorAndEventId(userId, eventId);
@@ -222,6 +225,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto addEvent(Long userId, EventNewDto eventDto) {
         LocalDateTime createdOn = LocalDateTime.now();
         User user = checkUser(userId);
@@ -255,6 +259,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public RequestUpdateResultEventStatusDto updateStatusRequest(Long userId, Long eventId, RequestUpdateEventStatusDto inputUpdate) {
         checkUser(userId);
         Event event = checkEvenByInitiatorAndEventId(userId, eventId);

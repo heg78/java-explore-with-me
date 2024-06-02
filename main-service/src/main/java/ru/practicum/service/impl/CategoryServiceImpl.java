@@ -3,6 +3,7 @@ package ru.practicum.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.dto.category.CategoryNewDto;
 import ru.practicum.exception.ConflictException;
@@ -38,6 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto addNewCategory(CategoryNewDto categoryNewDto) {
         Category category = CategoryMapper.toNewCategoryDto(categoryNewDto);
         Category saveCategory = categoryRepository.save(category);
@@ -45,6 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategoryById(Long catId) {
         Category category = checkCategory(catId);
         List<Event> events = eventsRepository.findByCategory(category);
@@ -55,6 +58,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto updateCategory(Long catId, CategoryDto categoryDto) {
         Category oldCategory = checkCategory(catId);
         String newName = categoryDto.getName();

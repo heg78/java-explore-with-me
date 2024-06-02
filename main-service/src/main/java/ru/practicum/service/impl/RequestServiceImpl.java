@@ -2,6 +2,7 @@ package ru.practicum.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.request.RequestParticipationDto;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
@@ -30,6 +31,7 @@ public class RequestServiceImpl implements RequestService {
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional
     public RequestParticipationDto addRequest(Long userId, Long eventId) {
         User user = checkUser(userId);
 
@@ -65,6 +67,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public RequestParticipationDto cancelRequest(Long userId, Long requestId) {
         checkUser(userId);
         Request request = requestRepository.findByIdAndRequesterId(requestId, userId).orElseThrow(
