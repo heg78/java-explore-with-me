@@ -16,13 +16,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Optional<Comment> findByAuthor_IdAndId(Long userId, Long id);
 
-    @Query("select new ru.practicum.dto.comment.CountCommentsByEventDto(c.event.id, COUNT(c)) " +
-            "from comments as c where c.event.id in ?1 " +
-            "GROUP BY c.event.id")
-    List<CountCommentsByEventDto> countCommentByEvent(List<Long> eventIds);
-
-    @Query("select c " +
-            "from comments as c " +
-            "where lower(c.text) like lower(concat('%', ?1, '%') )")
+    @Query("select c from comments as c where lower(c.text) like lower(concat('%', ?1, '%') )")
     List<Comment> search(String text, Pageable pageable);
 }

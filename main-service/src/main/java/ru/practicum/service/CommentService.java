@@ -9,19 +9,19 @@ import ru.practicum.model.Comment;
 import java.util.List;
 
 public interface CommentService {
-    CommentDto createComment(Long userId, Long eventId, NewCommentDto commentDto);
+    CommentDto create(Long userId, Long eventId, NewCommentDto commentDto);
 
-    CommentDto patchByUser(Long userId, Long commentId, UpdateCommentDto updateCommentDto);
+    CommentDto patch(Long userId, Long commentId, UpdateCommentDto updateCommentDto);
 
-    List<CommentDto> getCommentUser(Long userId);
+    List<CommentDto> get(Long userId);
 
-    Comment getUserCommentByUserAndCommentId(Long userId, Long commentId);
+    Comment getByUserAndCommentId(Long userId, Long commentId);
 
     List<Comment> getCommentEvent(Long eventId, Integer from, Integer size);
 
-    void deleteComment(Long userId, Long commentId);
+    void delete(Long userId, Long commentId);
 
-    void deleteCommentByAdmin(Long commentId);
+    void deleteByAdmin(Long commentId);
 
     List<Comment> search(String text, Integer from, Integer size);
 }

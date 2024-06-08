@@ -36,14 +36,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto patchByUser(Long userId, Long commentId, UpdateCommentDto updateCommentDto) {
+    public CommentDto patch(Long userId, Long commentId, UpdateCommentDto updateCommentDto) {
         User user = checkUser(userId);
         Comment comment = checkComment(commentId);
         checkAuthorComment(user, comment);
         LocalDateTime updateTime = LocalDateTime.now();
 
         if (updateTime.isAfter(comment.getCreated().plusHours(1L))) {
-            throw new UncorrectedParametersException("Сообщение возможно отредактировать только в течение часа");
+            throw new UncorrectedParametersException("Невозможно отредактировать сообщение");
         }
 
         comment.setText(updateCommentDto.getText());
@@ -53,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentDto> getCommentUser(Long userId) {
+    public List<CommentDto> get(Long userId) {
         checkUser(userId);
         List<Comment> commentList = commentRepository.findByAuthor_Id(userId);
         return commentList.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
@@ -61,10 +61,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Comment getUserCommentByUserAndCommentId(Long userId, Long commentId) {
+    public Comment getByUserAndCommentId(Long userId, Long commentId) {
         checkUser(userId);
         return commentRepository.findByAuthor_IdAndId(userId, commentId).orElseThrow(() -> new NotFoundException(
-                String.format("У пользователя c id=%d  не найден комментарий с id=%d", userId, commentId)));
+                String.format("У пользователя id=%d  не найден комментарий id=%d", userId, commentId)));
     }
 
     @Override
@@ -77,7 +77,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(Long userId, Long commentId) {
+    public void delete(Long userId, Long commentId) {
         User user = checkUser(userId);
         Comment comment = checkComment(commentId);
         checkAuthorComment(user, comment);
@@ -85,7 +85,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteCommentByAdmin(Long commentId) {
+    public void deleteByAdmin(Long commentId) {
         Comment comment = checkComment(commentId);
         commentRepository.deleteById(commentId);
     }
@@ -102,33 +102,33 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public CommentDto createComment(Long userId, Long eventId, NewCommentDto commentDto) {
+    public CommentDto create(Long userId, Long eventId, NewCommentDto commentDto) {
         Event event = checkEvent(eventId);
         User user = checkUser(userId);
         if (!event.getEventStatus().equals(EventStatus.PUBLISHED)) {
-            throw new UncorrectedParametersException("Невозможно добавить комментарий к событию со статусом не PUBLISHED");
+            throw new UncorrectedParametersException("Невозможно добавить комментарий к PUBLISHED");
         }
         return CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toComment(commentDto, event, user)));
     }
 
     private Event checkEvent(Long id) {
         return eventRepository.findById(id).orElseThrow(() -> new NotFoundException(
-                String.format("Событие с id=%d  не найдено", id)));
+                String.format("Событие id=%d  не найдено", id)));
     }
 
     private User checkUser(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException(
-                String.format("Пользователь c id=%d  не найден", id)));
+                String.format("Пользователь id=%d  не найден", id)));
     }
 
     private Comment checkComment(Long id) {
         return commentRepository.findById(id).orElseThrow(() -> new NotFoundException(
-                String.format("Комментарий c id=%d  не найден", id)));
+                String.format("Комментарий id=%d  не найден", id)));
     }
 
     private void checkAuthorComment(User user, Comment comment) {
         if (!comment.getAuthor().equals(user)) {
-            throw new UncorrectedParametersException("Пользователь не является автором комментария");
+            throw new UncorrectedParametersException("Пользователь не автор комментария");
         }
     }
 }
